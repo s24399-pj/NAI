@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 import os
 import cv2
 
-
-# --- Funkcje pomocnicze ---
 def load_and_scale_data(file_path, column_names=None):
     """
     Ładuje dane z pliku i skaluje cechy.
@@ -109,7 +107,7 @@ def load_images_from_folder(folder_path, label):
     labels = []
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
-        if os.path.isfile(file_path):
+        if os.path.isfile(file_path) and filename.lower().endswith(('.jpg', '.jpeg', '.png')):
             # Wczytaj obraz w odcieniach szarości
             image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
             if image is not None:
@@ -138,7 +136,6 @@ def load_brain_tumor_data(base_path):
     yes_path = os.path.join(base_path, "yes")
     no_path = os.path.join(base_path, "no")
 
-    # Ładuj obrazy z folderów `yes` i `no`
     yes_images, yes_labels = load_images_from_folder(yes_path, label=1)
     no_images, no_labels = load_images_from_folder(no_path, label=0)
 
@@ -159,7 +156,6 @@ if __name__ == "__main__":
     evaluate_classifiers(X_seeds, y_seeds, "Seeds Dataset")
     visualize_data(X_seeds, y_seeds, "Seeds Dataset")
 
-    # --- Brain MRI Dataset ---
     base_path = "brain_tumor_data/brain_tumor_dataset"
     X_brain_mri, y_brain_mri = load_brain_tumor_data(base_path)
 
