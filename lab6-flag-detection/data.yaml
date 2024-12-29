@@ -1,0 +1,5 @@
+train: \lab6-flag-detection\data\images
+val: \lab6-flag-detection\data\images
+
+nc: 3
+names: ["polska", "rosja", "ukraina"]
