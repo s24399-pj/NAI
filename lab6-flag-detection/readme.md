@@ -12,13 +12,13 @@ Projekt ma na celu wykrywanie i rozróżnianie flag trzech krajów:
 
 Model został wytrenowany przy użyciu YOLOv8 (Ultralytics). Dodatkowo, w zbiorze danych pojawiają się także obrazy negatywne (bez flag), aby model nauczył się sytuacji, w której nie występuje żaden obiekt.
 
-## Trening Modelu
+## Trening Modelu - użyta komenda
 
 ```yolo detect train model=yolov8n.pt data=data.yaml epochs=50 batch=8 name=flag_detection device="cuda:0"```
 
 ## Detekcja w Czasie Rzeczywistym użycie kamery
 
-W pliku scripts/detect_realtime.py możesz analogicznie wczytać model i przekazywać klatki z kamerki.
+W pliku scripts/detect_realtime.py można  wczytać model i przekazywać klatki z kamerki.
 
 ## Przykłady:
 
