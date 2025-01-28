@@ -12,41 +12,32 @@ def main():
 
     Autor: Aleksander Opałka
     """
-    env_id = "ALE/Breakout-v5"
+    env_id = "ALE/Breakout-v5"  # Identyfikator środowiska Atari
 
-    # Tworzymy równoległe środowiska Atari (64) i stackujemy 4 klatki
+    # Tworzymy 64 równoległe środowiska Atari
     env = make_atari_env(env_id, n_envs=64)
+
+    # Stackujemy 4 klatki w jedno obserwowane wejście
     env = VecFrameStack(env, n_stack=4)
 
-    # Inicjalizujemy model PPO z parametrami
+    # Inicjalizujemy model PPO z wybranymi parametrami
     model = PPO(
-        "CnnPolicy",
-        env=env,
-        device="cuda",
-        n_steps=256,
-        batch_size=2048,
-        n_epochs=4,
-        learning_rate=2.5e-4,
-        verbose=1,
-        tensorboard_log="./tb_log"
+        "CnnPolicy",  # Typ polityki (z siecią CNN)
+        env=env,  # Środowisko
+        device="cuda",  # Wykorzystanie GPU
+        n_steps=256,  # Liczba kroków na jedną aktualizację
+        batch_size=2048,  # Rozmiar batcha
+        n_epochs=4,  # Liczba epok na aktualizację
+        learning_rate=2.5e-4,  # Szybkość uczenia
+        verbose=1,  # Szczegółowość logów
+        tensorboard_log="./tb_log"  # Ścieżka do logów TensorBoard
     )
 
+    # Trenuj model przez 8 milionów kroków
     model.learn(total_timesteps=8_000_000)
+
+    # Zapisz wytrenowany model do pliku
     model.save("nai_rl_breakout_model")
-
-    test_env = make_atari_env(env_id, n_envs=1, seed=42)
-    test_env = VecFrameStack(test_env, n_stack=4)
-
-    obs = test_env.reset()
-    done = [False]
-    total_reward = 0
-
-    while not done[0]:
-        action, _states = model.predict(obs, deterministic=True)
-        obs, rewards, done, info = test_env.step(action)
-        total_reward += rewards
-
-    print(f"Testowy reward: {total_reward}")
 
 if __name__ == "__main__":
     main()

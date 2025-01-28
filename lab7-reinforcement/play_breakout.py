@@ -11,41 +11,42 @@ def main():
     Odtwarzanie gry Breakout przy użyciu wstępnie wytrenowanego modelu PPO (render_mode="human").
 
     Skrypt ładuje wcześniej wytrenowanego agenta (nai_rl_breakout_model.zip) i uruchamia go
-    w pojedynczym środowisku Breakout z wizualizacją w oknie (tzw. tryb "human").
+    w pojedynczym środowisku Breakout z wizualizacją w oknie.
     Możesz obserwować kilka epizodów rozgrywki i zobaczyć, jaki wynik (reward) osiąga agent.
 
     Autor: Aleksander Opałka
     """
 
-    # 1. Wczytujemy wytrenowany model
-    model = PPO.load("nai_rl_breakout_model")  # plik utworzony w main.py
+    # Wczytaj wytrenowany model PPO
+    model = PPO.load("nai_rl_breakout_model")
 
-    # 2. Tworzymy środowisko w *taki sam sposób*,
-    #    ale tym razem z n_envs=1 i parametrem render_mode="human" (o ile jest wspierany).
+    # Utwórz środowisko gry Breakout z wizualizacją
     env = make_atari_env(
-        env_id="ALE/Breakout-v5",
-        n_envs=1,
-        seed=42,
-        env_kwargs={"render_mode": "human"}
+        env_id="ALE/Breakout-v5",  # Identyfikator środowiska Atari
+        n_envs=1,  # Pojedyncze środowisko
+        seed=42,  # Ustaw ziarno losowości
+        env_kwargs={"render_mode": "human"}  # Tryb wizualizacji
     )
+
+    # Zintegruj ramki (klatki) w wektor
     env = VecFrameStack(env, n_stack=4)
 
-    num_episodes = 10
+    num_episodes = 10  # Liczba epizodów do uruchomienia
 
     for ep in range(num_episodes):
-        obs = env.reset()
-        done = [False]
-        total_reward = 0.0
+        obs = env.reset()  # Zresetuj środowisko
+        done = [False]  # Flaga końca epizodu
+        total_reward = 0.0  # Suma nagród w epizodzie
 
-        while not (done[0] ):
-            action, _ = model.predict(obs, deterministic=True)
-            obs, rewards, done, info = env.step(action)
-            total_reward += rewards[0]
-            time.sleep(0.02)
+        while not done[0]:  # Kontynuuj, dopóki epizod się nie zakończy
+            action, _ = model.predict(obs, deterministic=True)  # Przewidź akcję
+            obs, rewards, done, info = env.step(action)  # Wykonaj krok w środowisku
+            total_reward += rewards[0]  # Dodaj nagrodę za bieżący krok
+            time.sleep(0.02)  # Spowolnij rozgrywkę dla czytelniejszej wizualizacji
 
-        print(f"Epizod {ep+1} skończony, total_reward={total_reward}")
+        print(f"Epizod {ep + 1} skończony, total_reward={total_reward}")  # Wynik epizodu
 
-    env.close()
+    env.close()  # Zamknij środowisko
 
 if __name__ == "__main__":
     main()
